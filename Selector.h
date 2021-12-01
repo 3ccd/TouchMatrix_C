@@ -25,17 +25,19 @@ namespace tm_control{
     private:
         const Decorder DC;
         const Multiplexer MUX;
-        const LedDriver DRV;
 
-        void muxSetValue(int value);
-        void decSetValue(int value);
+        void muxInit() const;
+        void decInit() const;
+        void muxSetValue(int value) const;
+        void decSetValue(int value) const;
 
     public:
         friend class Singleton<Selector>;
+        void setMultiplex(int value);
 
     protected:
-        Selector(Decorder dec, Multiplexer mux, LedDriver drv);
-        virtual ~Selector();
+        Selector(Decorder dec, Multiplexer mux);
+        ~Selector() override;
     };
 
 }

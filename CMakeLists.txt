@@ -3,4 +3,6 @@ project(TouchMatrix)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(TouchMatrix main.cpp Selector.cpp Selector.h Singleton.h)
+add_executable(TouchMatrix main.cpp Selector.cpp Selector.h Singleton.h Led.cpp Led.h)
+
+target_link_libraries(TouchMatrix wiringPi)

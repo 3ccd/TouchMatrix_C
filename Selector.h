@@ -9,7 +9,7 @@
 
 namespace tm_control{
 
-    struct Decorder{
+    struct Decoder{
         int a, b, c, enable;
     };
 
@@ -17,13 +17,9 @@ namespace tm_control{
         int a, b, c, d;
     };
 
-    struct LedDriver{
-        int sin, clk, rlk, enable;
-    };
-
     class Selector : public Singleton<Selector>{
     private:
-        const Decorder DC;
+        const Decoder DC;
         const Multiplexer MUX;
 
         void muxInit() const;
@@ -36,7 +32,7 @@ namespace tm_control{
         void setMultiplex(int value);
 
     protected:
-        Selector(Decorder dec, Multiplexer mux);
+        Selector(Decoder& dec, Multiplexer& mux);
         ~Selector() override;
     };
 

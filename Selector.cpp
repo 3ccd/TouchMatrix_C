@@ -7,10 +7,11 @@
 #include <wiringPi.h>
 
 namespace tm_control{
-    Selector::Selector(Decorder dec, Multiplexer mux): DC(dec), MUX(mux){
+    Selector::Selector(Decoder& dec, Multiplexer& mux): DC(dec), MUX(mux){
         if(wiringPiSetupGpio() < 0){
             return;
         }
+
         muxInit();
         decInit();
     }

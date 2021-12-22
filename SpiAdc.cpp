@@ -10,6 +10,7 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
+#include <iostream>
 
 namespace tm_control {
 
@@ -23,7 +24,9 @@ namespace tm_control {
         }
 
         int ret = beginSpi();
-        if(ret < 0)return;
+        if(ret < 0){
+            std::cout << "error : " << strerror(errno) << std::endl;
+        }
     }
 
     int SpiAdc::beginSpi() {
@@ -33,32 +36,32 @@ namespace tm_control {
             return -1;
         }
 
-        if(ioctl(fd, SPI_IOC_WR_MODE, ADC.spi_mode) < 0){
+        if(ioctl(fd, SPI_IOC_WR_MODE, &ADC.spi_mode) < 0){
             close(fd);
             isOpen = false;
             return -2;
         }
-        if(ioctl(fd, SPI_IOC_RD_MODE, ADC.spi_mode) < 0){
+        if(ioctl(fd, SPI_IOC_RD_MODE, &ADC.spi_mode) < 0){
             close(fd);
             isOpen = false;
             return -3;
         }
-        if(ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, ADC.spi_bits) < 0){
+        if(ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &ADC.spi_bits) < 0){
             close(fd);
             isOpen = false;
             return -4;
         }
-        if(ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, ADC.spi_bits) < 0){
+        if(ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &ADC.spi_bits) < 0){
             close(fd);
             isOpen = false;
             return -5;
         }
-        if(ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, ADC.spi_speed_hz) < 0){
+        if(ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &ADC.spi_speed_hz) < 0){
             close(fd);
             isOpen = false;
             return -6;
         }
-        if(ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, ADC.spi_speed_hz) < 0){
+        if(ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &ADC.spi_speed_hz) < 0){
             close(fd);
             isOpen = false;
             return -7;

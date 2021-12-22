@@ -18,7 +18,7 @@ namespace tm_control{
         int spi_bits;
     };
 
-    class SpiAdc : public Singleton<SpiAdc>{
+    class SpiAdc{
     private:
         const Adc& ADC;
         char *m_spidev;
@@ -28,10 +28,6 @@ namespace tm_control{
         int beginSpi();
 
     public:
-        friend class Singleton<SpiAdc>;
-        int read();
-
-    protected:
         SpiAdc(char *p_spidev, Adc& adc);
         ~SpiAdc();
     };

@@ -13,7 +13,7 @@ namespace tm_control{
         int sin, clk, rck, enable;
     };
 
-    class Led: public Singleton<Led>{
+    class Led{
     private:
         const Driver DRV;
         static constexpr int DRV_CNT = 8;
@@ -24,15 +24,13 @@ namespace tm_control{
         void initBuffer();
 
         static void shift(int pin);
-        void sendBuffer();
-        void set(int num, bool output);
 
     public:
-        friend class Singleton<Led>;
-
-    protected:
         explicit Led(Driver& drv);
-        ~Led() override;
+        void sendBuffer();
+        void set(int num, bool output);
+        void clearBuffer();
+        ~Led();
 
     };
 

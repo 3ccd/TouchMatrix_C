@@ -11,6 +11,7 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 #include <iostream>
+#include <cerrno>
 
 namespace tm_control {
 
@@ -24,8 +25,9 @@ namespace tm_control {
         }
 
         int ret = beginSpi();
-        if(ret < 0){
-            std::cout << "error : " << strerror(errno) << std::endl;
+        if(ret < 0) {
+            std::cout << "spi error " << std::to_string(ret) << std::endl;
+            printf("print error string by strerror: %s\n", strerror(errno));
         }
     }
 
@@ -36,12 +38,13 @@ namespace tm_control {
             return -1;
         }
 
-        if(ioctl(fd, SPI_IOC_WR_MODE, &ADC.spi_mode) < 0){
+        int mode = ADC.spi_mode | SPI_3WIRE;
+        if(ioctl(fd, SPI_IOC_WR_MODE, &mode) < 0){
             close(fd);
             isOpen = false;
             return -2;
         }
-        if(ioctl(fd, SPI_IOC_RD_MODE, &ADC.spi_mode) < 0){
+        if(ioctl(fd, SPI_IOC_RD_MODE, &mode) < 0){
             close(fd);
             isOpen = false;
             return -3;
@@ -68,6 +71,17 @@ namespace tm_control {
         }
         isOpen = true;
         return 0;
+    }
+
+    int SpiAdc::read(unsigned char *p_rxbuffer, u_int8_t p_rxlen) const {
+        /*struct spi_ioc_transfer message[1];
+        memset(message, 0, sizeof(message));
+
+        message[0].rx_buf = *p_rxbuffer;
+        message[0].p_rxlen = p_rxlen;
+        int ret = ioctl(fd, SPI_IOC_MESSAGE(1), message);*/
+        int ret = ::read(fd, p_rxbuffer, p_rxlen);
+        return ret;
     }
 
     SpiAdc::~SpiAdc() {

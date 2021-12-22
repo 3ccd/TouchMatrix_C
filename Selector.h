@@ -17,7 +17,7 @@ namespace tm_control{
         int a, b, c, d;
     };
 
-    class Selector : public Singleton<Selector>{
+    class Selector{
     private:
         const Decoder DC;
         const Multiplexer MUX;
@@ -28,12 +28,9 @@ namespace tm_control{
         void decSetValue(int value) const;
 
     public:
-        friend class Singleton<Selector>;
-        void setMultiplex(int value);
-
-    protected:
         Selector(Decoder& dec, Multiplexer& mux);
-        ~Selector() override;
+        void setMultiplex(int value);
+        ~Selector();
     };
 
 }

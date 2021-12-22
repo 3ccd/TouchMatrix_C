@@ -5,6 +5,7 @@
 #ifndef TOUCHMATRIX_SPIADC_H
 #define TOUCHMATRIX_SPIADC_H
 
+#include <cstdlib>
 #include "Singleton.h"
 
 namespace tm_control{
@@ -28,6 +29,7 @@ namespace tm_control{
         int beginSpi();
 
     public:
+        int read(unsigned char *p_rx_buffer, u_int8_t p_rx_len) const;
         SpiAdc(char *p_spidev, Adc& adc);
         ~SpiAdc();
     };

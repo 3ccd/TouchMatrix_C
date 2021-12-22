@@ -4,6 +4,7 @@
 
 #include "Led.h"
 #include <wiringPi.h>
+#include <cstring>
 
 namespace tm_control{
 
@@ -30,6 +31,10 @@ namespace tm_control{
         }
     }
 
+    void Led::clearBuffer() {
+        memset(buffer, 0, sizeof(buffer));
+    }
+
     void Led::shift(int pin) {
         digitalWrite(pin, HIGH);
         delayMicroseconds(1);
@@ -42,7 +47,7 @@ namespace tm_control{
         int bLen = bufferLength();
         int chunk = sizeof(unsigned char);
         for(int i = 0; i < chCount; i++){
-            digitalWrite(DRV.sin, buffer[(bLen - 1) - int(i / chunk)] >> i % chunk);
+            digitalWrite(DRV.sin, (buffer[(bLen - 1) - int(i / chunk)] >> i % chunk) & 0b00000001);
             shift(DRV.clk);
         }
         shift(DRV.rck);

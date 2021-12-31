@@ -42,7 +42,7 @@ namespace tm_control{
     }
 
     void Led::sendBuffer() {
-        digitalWrite(DRV.enable, HIGH);
+        setEnable(false);
         int chCount = DRV_CNT * DRV_CH;
         int bLen = bufferLength();
         int chunk = sizeof(unsigned char);
@@ -51,13 +51,16 @@ namespace tm_control{
             shift(DRV.clk);
         }
         shift(DRV.rck);
-        digitalWrite(DRV.enable, LOW);
     }
 
     void Led::set(int num, bool output){
         int chunk = sizeof(unsigned char);
         if(int(num / chunk) >= bufferLength()) return;
         buffer[int(num / chunk)] |= (0b10000000 >> (num % chunk));
+    }
+
+    void Led::setEnable(bool enable) const {
+        digitalWrite(DRV.enable, !enable);
     }
 
     Led::~Led() = default;

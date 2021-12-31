@@ -16,12 +16,14 @@ namespace tm_control{
         Selector& sel;
         Led& drv;
 
-        int prevSensorNum{};
+        int prevSensorNum;
+
 
     public:
         TouchMatrix(SpiAdc &adc, Selector &sel, Led &drv);
-        u_int16_t getRawValue(uint16_t *data_ptr, int sensorNum);
-        void setLed(int sensorNum);
+        u_int16_t getRawValue(uint16_t *data_ptr, int sensorNum, bool ir_enable);
+        void getFrame(uint16_t *data_ptr, int data_len);
+        void setLed(int sensorNum, bool enable);
 
     };
 }

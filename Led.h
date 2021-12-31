@@ -29,6 +29,7 @@ namespace tm_control{
         explicit Led(Driver& drv);
         void sendBuffer();
         void set(int num, bool output);
+        void setEnable(bool enable) const;
         void clearBuffer();
         ~Led();
 

@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(TouchMatrix main.cpp Selector.cpp Selector.h Singleton.h Led.cpp Led.h SpiAdc.cpp SpiAdc.h TouchMatrix.cpp TouchMatrix.h)
 
-target_link_libraries(TouchMatrix wiringPi oscpack)
+target_link_libraries(TouchMatrix wiringPi oscpack pthread)

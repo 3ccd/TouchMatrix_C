@@ -9,21 +9,12 @@
 
 
 int msg = 0;
+const int bufferSize = 4096;
+char udpBuffer[bufferSize];
+uint16_t fBuffer[121];
 
-void grabFrame(tm_control::TouchMatrix *tmControl) {
+void grabFrame(tm_control::TouchMatrix *tmControl, UdpTransmitSocket *udpTransmitSocket) {
     std::cout << "Start thread" << std::endl;
-
-    /*
-     * OSC Connection Initialize
-     */
-    const int bufferSize = 1024;
-    UdpTransmitSocket udpTransmitSocket(IpEndpointName("127.0.0.1", 7000));
-    char udpBuffer[bufferSize];
-    osc::OutboundPacketStream packetStream(udpBuffer, bufferSize);
-
-    // Frame buffer
-    uint16_t fBuffer[121];
-    memset(fBuffer, 0, sizeof (fBuffer));
 
     while(true){
         if(msg == -1){
@@ -36,13 +27,14 @@ void grabFrame(tm_control::TouchMatrix *tmControl) {
         /*
         * Send Message
         */
+        osc::OutboundPacketStream packetStream(udpBuffer, bufferSize);
         packetStream << osc::BeginBundleImmediate
                      << osc::BeginMessage("/sensor_matrix");
         for (unsigned short value: fBuffer) {
-            packetStream << value;
+            packetStream << (int)value;
         }
         packetStream << osc::EndMessage << osc::EndBundle;
-        udpTransmitSocket.Send(packetStream.Data(), packetStream.Size());
+        udpTransmitSocket->Send(packetStream.Data(), packetStream.Size());
     }
 
 }
@@ -66,12 +58,23 @@ int main() {
     tm_control::Selector selControl(dec, mux);
     tm_control::TouchMatrix tmControl(adcControl, selControl, ledControl);
 
+
+    /*
+     * OSC Connection Initialize
+     */
+    UdpTransmitSocket udpTransmitSocket(IpEndpointName("127.0.0.1", 7000));
+
+    /*
+     * buffer Initialize
+     */
+    memset(fBuffer, 0, sizeof (fBuffer));
+
     /*
      * Sensor scan Thread Initialize
      */
     std::cout << "Start Scan" << std::endl;
 
-    std::thread scanThread(grabFrame, &tmControl);
+    std::thread scanThread(grabFrame, &tmControl, &udpTransmitSocket);
 
     std::cout << "Press the enter key to quit." << std::endl;
     int input;

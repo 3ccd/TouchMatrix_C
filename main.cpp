@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <thread>
+#include <unistd.h>
 
 #include <oscpack/osc/OscOutboundPacketStream.h>
 #include <oscpack/ip/UdpSocket.h>
@@ -22,20 +23,21 @@ void grabFrame(tm_control::TouchMatrix *tmControl, UdpTransmitSocket *udpTransmi
             break;
         }
 
-        tmControl->getFrame(fBuffer, 121); // scan frame
+        //std::cout << tmControl->getRawValue(17,true) << std::endl;
+        //sleep(1);
 
-        /*
-        * Send Message
-        */
+        tmControl->getFrame(fBuffer, 121); // scan frame
 
         osc::OutboundPacketStream packetStream(udpBuffer, bufferSize);
         packetStream << osc::BeginBundleImmediate;
         for (int i = 0; i < 121; i++) {
+            //std::cout << (int) fBuffer[i] << ", ";
             packetStream << osc::BeginMessage("/sensor_value")
                          << i
                          << (int) fBuffer[i]
                          << osc::EndMessage;
         }
+        //std::cout << std::endl;
         packetStream << osc::EndBundle;
         udpTransmitSocket->Send(packetStream.Data(), packetStream.Size());
     }
@@ -48,10 +50,10 @@ int main() {
     /*
      * GPIO and SPI Setting
      */
-    tm_control::Adc adc{0, 0, 2, 1000000, 0, 8};
-    tm_control::Driver drv{12, 16, 20, 21};
-    tm_control::Decoder dec{17, 27, 22, 23};
-    tm_control::Multiplexer mux{6, 13, 19, 26};
+    tm_control::Adc adc{0, 0, 2, 10000000, 0, 8};
+    tm_control::Driver drv{26, 27, 28, 29};
+    tm_control::Decoder dec{0, 2, 3, 4};
+    tm_control::Multiplexer mux{22, 23, 24, 25};
 
     /*
      * TouchMatrix Initialize
@@ -65,7 +67,7 @@ int main() {
     /*
      * OSC Connection Initialize
      */
-    UdpTransmitSocket udpTransmitSocket(IpEndpointName("192.168.1.127", 7000));
+    UdpTransmitSocket udpTransmitSocket(IpEndpointName("192.168.137.1", 7000));
 
     /*
      * buffer Initialize

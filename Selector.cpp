@@ -5,11 +5,12 @@
 
 #include "Selector.h"
 #include <wiringPi.h>
+#include <iostream>
 
 namespace tm_control{
     Selector::Selector(Decoder& dec, Multiplexer& mux): DC(dec), MUX(mux){
-        if(wiringPiSetupGpio() < 0){
-            return;
+        if(wiringPiSetup() < 0){
+            std::cout << "selector gpio error" << std::endl;
         }
 
         muxInit();
@@ -28,24 +29,25 @@ namespace tm_control{
         pinMode(DC.b, OUTPUT);
         pinMode(DC.c, OUTPUT);
         pinMode(DC.enable, OUTPUT);
+        digitalWrite(DC.enable, TRUE);
     }
 
     void Selector::muxSetValue(int value) const {
-        digitalWrite(MUX.a, (value & 1000) >> 3);
-        digitalWrite(MUX.b, (value & 0100) >> 2);
-        digitalWrite(MUX.c, (value & 0010) >> 1);
-        digitalWrite(MUX.d, (value & 0001) >> 0);
+        digitalWrite(MUX.a, (bool)((value & 0b1000) >> 3));
+        digitalWrite(MUX.b, (bool)((value & 0b0100) >> 2));
+        digitalWrite(MUX.c, (bool)((value & 0b0010) >> 1));
+        digitalWrite(MUX.d, (bool)((value & 0b0001) >> 0));
     }
 
     void Selector::decSetValue(int value) const {
-        digitalWrite(DC.a, (value & 0100) >> 2);
-        digitalWrite(DC.b, (value & 0010) >> 1);
-        digitalWrite(DC.c, (value & 0001) >> 0);
+        digitalWrite(DC.c, (bool)((value & 0b0100) >> 2));
+        digitalWrite(DC.b, (bool)((value & 0b0010) >> 1));
+        digitalWrite(DC.a, (bool)((value & 0b0001) >> 0));
     }
 
     void Selector::setMultiplex(int value) {
         int muxNum = floor(value / 16);
-        int muxCh = value & 16;
+        int muxCh = value % 16;
         decSetValue(muxNum);
         muxSetValue(muxCh);
     }

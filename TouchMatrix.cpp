@@ -13,17 +13,14 @@ namespace tm_control {
         prevSensorNum = -1;
     }
 
-    uint16_t TouchMatrix::getRawValue(uint16_t *data_ptr, int sensorNum, bool ir_enable) {
+    uint16_t TouchMatrix::getRawValue(int sensorNum, bool ir_enable) {
         sel.setMultiplex(sensorNum);
         setLed(sensorNum, ir_enable);
 
-        unsigned char buffer[2];
-        memset(buffer, 0, sizeof(buffer));
+        adc.read();
+        uint16_t value = adc.read();
 
-        int ret = adc.read(&buffer[0], sizeof(buffer));
-
-        *data_ptr = (buffer[0] << 8) | buffer[1];
-        return ret;
+        return value;
     }
 
     void TouchMatrix::getFrame(uint16_t *data_ptr, int data_len) {
@@ -31,14 +28,16 @@ namespace tm_control {
         for(int i = 0; i < data_len; i++){
             uint16_t irOn = 0;
             uint16_t irOff = 0;
-            getRawValue(&irOn, i, true);
-            getRawValue(&irOff, i, false);
-            data_ptr[i] = irOn - irOff;
+            irOn = getRawValue(i, true);
+            //irOff = getRawValue(i, false);
+            int tmp = (int)irOn - (int)irOff;
+            if(tmp < 0) tmp = 0;
+            data_ptr[i] = (uint16_t)tmp;
         }
     }
 
     void TouchMatrix::setLed(int sensorNum, bool enable) {
-        if(prevSensorNum == sensorNum) return;
+        //if(prevSensorNum == sensorNum) return;
         if(!enable){
             drv.setEnable(false);
             return;

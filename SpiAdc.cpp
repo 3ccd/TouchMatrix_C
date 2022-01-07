@@ -73,15 +73,17 @@ namespace tm_control {
         return 0;
     }
 
-    int SpiAdc::read(unsigned char *p_rxbuffer, u_int8_t p_rxlen) const {
-        /*struct spi_ioc_transfer message[1];
-        memset(message, 0, sizeof(message));
+    int SpiAdc::read() {
+        uint8_t	rxbuf[4096];
+        uint16_t value;
+        int len = 2;
 
-        message[0].rx_buf = *p_rxbuffer;
-        message[0].p_rxlen = p_rxlen;
-        int ret = ioctl(fd, SPI_IOC_MESSAGE(1), message);*/
-        int ret = ::read(fd, p_rxbuffer, p_rxlen);
-        return ret;
+        memset(rxbuf, 0, sizeof rxbuf);
+
+        ::read(fd, &rxbuf[0], len);
+
+        value = (rxbuf[0] << 8) | rxbuf[1];
+        return value;
     }
 
     SpiAdc::~SpiAdc() {

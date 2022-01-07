@@ -5,12 +5,13 @@
 #include "Led.h"
 #include <wiringPi.h>
 #include <cstring>
+#include <iostream>
 
 namespace tm_control{
 
     Led::Led(Driver& drv) : DRV(drv){
-        if(wiringPiSetupGpio() < 0){
-            return;
+        if(wiringPiSetup() < 0){
+            std::cout << "led gpio error" << std::endl;
         }
         initBuffer();
 
@@ -44,19 +45,19 @@ namespace tm_control{
     void Led::sendBuffer() {
         setEnable(false);
         int chCount = DRV_CNT * DRV_CH;
-        int bLen = bufferLength();
-        int chunk = sizeof(unsigned char);
-        for(int i = 0; i < chCount; i++){
-            digitalWrite(DRV.sin, (buffer[(bLen - 1) - int(i / chunk)] >> i % chunk) & 0b00000001);
+        int bLen = chCount / 8;
+        int chunk = 8;
+        for(int i = chCount; i >= 0; i--){
+            digitalWrite(DRV.sin, (buffer[int(i / chunk)] >> (i % chunk)) & 0b00000001);
             shift(DRV.clk);
         }
         shift(DRV.rck);
     }
 
     void Led::set(int num, bool output){
-        int chunk = sizeof(unsigned char);
+        int chunk = 8;
         if(int(num / chunk) >= bufferLength()) return;
-        buffer[int(num / chunk)] |= (0b10000000 >> (num % chunk));
+        buffer[(int)(num / chunk)] |= (0b00000001 << (num % chunk));
     }
 
     void Led::setEnable(bool enable) const {

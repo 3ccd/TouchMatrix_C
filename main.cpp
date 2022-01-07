@@ -16,8 +16,8 @@ uint16_t fBuffer[121];
 void grabFrame(tm_control::TouchMatrix *tmControl, UdpTransmitSocket *udpTransmitSocket) {
     std::cout << "Start thread" << std::endl;
 
-    while(true){
-        if(msg == -1){
+    while (true) {
+        if (msg == -1) {
             std::cout << "End thread" << std::endl;
             break;
         }
@@ -27,13 +27,16 @@ void grabFrame(tm_control::TouchMatrix *tmControl, UdpTransmitSocket *udpTransmi
         /*
         * Send Message
         */
+
         osc::OutboundPacketStream packetStream(udpBuffer, bufferSize);
-        packetStream << osc::BeginBundleImmediate
-                     << osc::BeginMessage("/sensor_matrix");
-        for (unsigned short value: fBuffer) {
-            packetStream << (int)value;
+        packetStream << osc::BeginBundleImmediate;
+        for (int i = 0; i < 121; i++) {
+            packetStream << osc::BeginMessage("/sensor_value")
+                         << i
+                         << (int) fBuffer[i]
+                         << osc::EndMessage;
         }
-        packetStream << osc::EndMessage << osc::EndBundle;
+        packetStream << osc::EndBundle;
         udpTransmitSocket->Send(packetStream.Data(), packetStream.Size());
     }
 
@@ -62,12 +65,12 @@ int main() {
     /*
      * OSC Connection Initialize
      */
-    UdpTransmitSocket udpTransmitSocket(IpEndpointName("127.0.0.1", 7000));
+    UdpTransmitSocket udpTransmitSocket(IpEndpointName("192.168.1.127", 7000));
 
     /*
      * buffer Initialize
      */
-    memset(fBuffer, 0, sizeof (fBuffer));
+    memset(fBuffer, 0, sizeof(fBuffer));
 
     /*
      * Sensor scan Thread Initialize
@@ -84,8 +87,6 @@ int main() {
     scanThread.join();
 
     std::cout << "End Scan" << std::endl;
-
-
 
 
     return 0;

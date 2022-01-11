@@ -5,6 +5,8 @@
 #include <cstring>
 #include <cstdint>
 
+#include <wiringPi.h>
+
 #include "TouchMatrix.h"
 
 namespace tm_control {
@@ -14,8 +16,10 @@ namespace tm_control {
     }
 
     uint16_t TouchMatrix::getRawValue(int sensorNum, bool ir_enable) {
-        sel.setMultiplex(sensorNum);
         setLed(sensorNum, ir_enable);
+        sel.setMultiplex(sensorNum);
+
+        delayMicroseconds(50);
 
         adc.read();
         uint16_t value = adc.read();

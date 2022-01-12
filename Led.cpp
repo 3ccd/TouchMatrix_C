@@ -18,7 +18,7 @@ namespace tm_control{
         pinMode(DRV.sin, OUTPUT);
         pinMode(DRV.clk, OUTPUT);
         pinMode(DRV.rck, OUTPUT);
-        pinMode(DRV.enable, OUTPUT);
+        pinMode(DRV.l_enable, OUTPUT);
     }
 
     int Led::bufferLength() {
@@ -60,8 +60,9 @@ namespace tm_control{
         buffer[(int)(num / chunk)] |= (0b00000001 << (num % chunk));
     }
 
-    void Led::setEnable(bool enable) const {
-        digitalWrite(DRV.enable, !enable);
+    void Led::setEnable(bool led_enable) const {
+        int pin = 29;
+        digitalWrite(pin, !led_enable);
     }
 
     Led::~Led() = default;

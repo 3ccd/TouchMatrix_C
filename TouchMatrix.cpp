@@ -33,7 +33,7 @@ namespace tm_control {
             uint16_t irOn = 0;
             uint16_t irOff = 0;
             irOn = getRawValue(i, true);
-            //irOff = getRawValue(i, false);
+            irOff = getRawValue(i, false);
             int tmp = (int)irOn - (int)irOff;
             if(tmp < 0) tmp = 0;
             data_ptr[i] = (uint16_t)tmp;

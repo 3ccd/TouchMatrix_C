@@ -10,7 +10,7 @@
 namespace tm_control{
 
     struct Driver{
-        int sin, clk, rck, enable;
+        int sin, clk, rck, l_enable;
     };
 
     class Led{
@@ -29,7 +29,7 @@ namespace tm_control{
         explicit Led(Driver& drv);
         void sendBuffer();
         void set(int num, bool output);
-        void setEnable(bool enable) const;
+        void setEnable(bool led_enable) const;
         void clearBuffer();
         ~Led();
 

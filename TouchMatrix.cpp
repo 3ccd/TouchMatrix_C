@@ -19,7 +19,7 @@ namespace tm_control {
         setLed(sensorNum, ir_enable);
         sel.setMultiplex(sensorNum);
 
-        delayMicroseconds(50);
+        delayMicroseconds(60);
 
         adc.read();
         uint16_t value = adc.read();
@@ -55,6 +55,5 @@ namespace tm_control {
         drv.set(sensorNum + 11, true);
         drv.sendBuffer();
         drv.setEnable(true);
-        prevSensorNum = sensorNum;
     }
 }

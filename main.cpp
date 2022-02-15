@@ -50,7 +50,7 @@ int main() {
     /*
      * GPIO and SPI Setting
      */
-    tm_control::Adc adc{0, 0, 2, 10000000, 0, 8};
+    tm_control::Adc adc{0, 0, 2, 1000000, 0, 8};
     tm_control::Driver drv{26, 27, 28, 29};
     tm_control::Decoder dec{0, 2, 3, 4};
     tm_control::Multiplexer mux{22, 23, 24, 25};

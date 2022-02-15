@@ -16,6 +16,7 @@ namespace tm_control {
     }
 
     uint16_t TouchMatrix::getRawValue(int sensorNum, bool ir_enable) {
+
         setLed(sensorNum, ir_enable);
         sel.setMultiplex(sensorNum);
 
@@ -53,6 +54,9 @@ namespace tm_control {
         drv.set(sensorNum-row, true);
         drv.set(sensorNum+(1-row), true);
         drv.set(sensorNum + 11, true);
+
+
+        drv.setEnable(false);
         drv.sendBuffer();
         drv.setEnable(true);
     }

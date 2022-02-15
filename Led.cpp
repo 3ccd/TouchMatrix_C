@@ -43,7 +43,6 @@ namespace tm_control{
     }
 
     void Led::sendBuffer() {
-        setEnable(false);
         int chCount = DRV_CNT * DRV_CH;
         int bLen = chCount / 8;
         int chunk = 8;
